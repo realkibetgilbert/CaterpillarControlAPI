@@ -5,7 +5,7 @@ using CaterpillarControlService.API.Core.Models;
 
 namespace CaterpillarControlService.API.Infrastructure.ApplicationDbContext
 {
-    public class CaterpillarDbContext : IdentityDbContext<Rider, IdentityRole<long>, long>
+    public class CaterpillarDbContext : IdentityDbContext<User, IdentityRole<long>, long>
     {
         public CaterpillarDbContext(DbContextOptions<CaterpillarDbContext> options) : base(options)
         {
@@ -14,5 +14,9 @@ namespace CaterpillarControlService.API.Infrastructure.ApplicationDbContext
         public DbSet<Caterpillar> Caterpillars { get; set; }
         public DbSet<Planet> Planets { get; set; }
         public DbSet<Spice> Spices { get; set; }
+        public DbSet<Shift> Shifts { get; set; }
+        public DbSet<UserControlStation> UserControlStations { get; set; }
+
+
     }
 }

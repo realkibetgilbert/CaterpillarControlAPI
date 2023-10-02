@@ -30,9 +30,9 @@ namespace CaterpillarControlService.API.Extensions
 
             services.AddAutoMapper(typeof(MappingProfile));
 
-            services.AddIdentityCore<Rider>()
+            services.AddIdentityCore<User>()
 .AddRoles<IdentityRole<long>>()
-.AddTokenProvider<DataProtectorTokenProvider<Rider>>("Caterpillar")
+.AddTokenProvider<DataProtectorTokenProvider<User>>("Caterpillar")
 .AddEntityFrameworkStores<CaterpillarDbContext>()
 .AddDefaultTokenProviders();
 
