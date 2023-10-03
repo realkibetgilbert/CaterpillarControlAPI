@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CaterpillarControlService.API.Infrastructure.ModelConfigurations
 {
-    public class SpiceModelConfiguration : IEntityTypeConfiguration<Spice>
+    public class SpiceConfiguration : IEntityTypeConfiguration<Spice>
     {
         public void Configure(EntityTypeBuilder<Spice> builder)
         {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CaterpillarControlService.API.Infrastructure.ModelConfigurations
 {
-    public class UserConfigurations : IEntityTypeConfiguration<User>
+    public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
@@ -12,7 +12,7 @@ namespace CaterpillarControlService.API.Infrastructure.ModelConfigurations
             builder.HasMany(S => S.Shifts).WithOne(U => U.Rider).HasForeignKey(U => U.RiderId).OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(t => t.IsActive).HasDefaultValue(true);
-
+          
         }
     }
 }

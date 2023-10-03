@@ -2,6 +2,7 @@
 using CaterpillarControlService.API.Core.Models;
 using CaterpillarControlService.API.Core.Utils;
 using CaterpillarControlService.API.Infrastructure.ApplicationDbContext;
+using CaterpillarControlService.API.Infrastructure.SeedData;
 using CaterpillarControlService.API.Infrastructure.SqlServerImplementations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -26,14 +27,29 @@ namespace CaterpillarControlService.API.Extensions
             services.AddDbContext<CaterpillarDbContext>(options =>
                options.UseSqlServer(config.GetConnectionString("CaterpillarConnectionstring")));
 
+            //services.AddDbContext<CaterpillarDbContext>(options =>
+            //      options.UseSqlServer(config.GetConnectionString("CaterpillarConnectionstring")))
+            //    .AddIdentityCore<User>()
+
+            //.AddRoles<IdentityRole>()
+            //.AddEntityFrameworkStores<CaterpillarDbContext>()
+            //.AddRoleManager<RoleManager<IdentityRole>>()
+            //.AddSignInManager<SignInManager<User>>()
+            //.AddUserManager<UserManager<User>>();
+
             services.AddScoped<IControlStationRepository, ControlStationRepository>();
 
-            services.AddAutoMapper(typeof(MappingProfile));
+            services.AddScoped<ITokenService, TokenService>();
 
+            services.AddAutoMapper(typeof(MappingProfile));
+     
             services.AddIdentityCore<User>()
 .AddRoles<IdentityRole<long>>()
 .AddTokenProvider<DataProtectorTokenProvider<User>>("Caterpillar")
 .AddEntityFrameworkStores<CaterpillarDbContext>()
+.AddRoleManager<RoleManager<IdentityRole<long>>>()
+ .AddSignInManager<SignInManager<User>>()   
+ .AddUserManager<UserManager<User>>()
 .AddDefaultTokenProviders();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -68,6 +84,7 @@ namespace CaterpillarControlService.API.Extensions
         }
         public static IApplicationBuilder UseApplicationServices(this IApplicationBuilder app, IConfiguration configuration, IWebHostEnvironment env)
         {
+         
 
             app.UseCors(x => x
                             .AllowAnyOrigin()
@@ -82,6 +99,7 @@ namespace CaterpillarControlService.API.Extensions
             app.UseAuthentication();
 
             app.UseAuthorization();
+
 
 
             return app;

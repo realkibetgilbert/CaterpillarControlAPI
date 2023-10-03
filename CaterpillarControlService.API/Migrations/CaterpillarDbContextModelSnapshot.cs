@@ -50,7 +50,9 @@ namespace CaterpillarControlService.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -76,7 +78,73 @@ namespace CaterpillarControlService.API.Migrations
                     b.ToTable("Planets");
                 });
 
-            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Rider", b =>
+            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Shift", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("ControlStationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("RiderId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ControlStationId");
+
+                    b.HasIndex("RiderId");
+
+                    b.ToTable("Shifts");
+                });
+
+            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Spice", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CollectedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<long>("ShiftId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Reference")
+                        .IsUnique()
+                        .HasFilter("[Reference] IS NOT NULL");
+
+                    b.HasIndex("ShiftId");
+
+                    b.ToTable("Spices");
+                });
+
+            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.User", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -100,6 +168,11 @@ namespace CaterpillarControlService.API.Migrations
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -150,7 +223,7 @@ namespace CaterpillarControlService.API.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Spice", b =>
+            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.UserControlStation", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -158,15 +231,22 @@ namespace CaterpillarControlService.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("ControlStationId")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Spices");
+                    b.HasIndex("ControlStationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserControlStations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<long>", b =>
@@ -302,6 +382,55 @@ namespace CaterpillarControlService.API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Shift", b =>
+                {
+                    b.HasOne("CaterpillarControlService.API.Core.Models.ControlStation", "ControlStation")
+                        .WithMany()
+                        .HasForeignKey("ControlStationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CaterpillarControlService.API.Core.Models.User", "Rider")
+                        .WithMany("Shifts")
+                        .HasForeignKey("RiderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ControlStation");
+
+                    b.Navigation("Rider");
+                });
+
+            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Spice", b =>
+                {
+                    b.HasOne("CaterpillarControlService.API.Core.Models.Shift", "Shift")
+                        .WithMany("Spices")
+                        .HasForeignKey("ShiftId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Shift");
+                });
+
+            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.UserControlStation", b =>
+                {
+                    b.HasOne("CaterpillarControlService.API.Core.Models.ControlStation", "ControlStation")
+                        .WithMany()
+                        .HasForeignKey("ControlStationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CaterpillarControlService.API.Core.Models.User", "Rider")
+                        .WithMany("UserTollStations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ControlStation");
+
+                    b.Navigation("Rider");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<long>", null)
@@ -313,7 +442,7 @@ namespace CaterpillarControlService.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
                 {
-                    b.HasOne("CaterpillarControlService.API.Core.Models.Rider", null)
+                    b.HasOne("CaterpillarControlService.API.Core.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -322,7 +451,7 @@ namespace CaterpillarControlService.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
                 {
-                    b.HasOne("CaterpillarControlService.API.Core.Models.Rider", null)
+                    b.HasOne("CaterpillarControlService.API.Core.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -337,7 +466,7 @@ namespace CaterpillarControlService.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CaterpillarControlService.API.Core.Models.Rider", null)
+                    b.HasOne("CaterpillarControlService.API.Core.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -346,11 +475,23 @@ namespace CaterpillarControlService.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
                 {
-                    b.HasOne("CaterpillarControlService.API.Core.Models.Rider", null)
+                    b.HasOne("CaterpillarControlService.API.Core.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Shift", b =>
+                {
+                    b.Navigation("Spices");
+                });
+
+            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.User", b =>
+                {
+                    b.Navigation("Shifts");
+
+                    b.Navigation("UserTollStations");
                 });
 #pragma warning restore 612, 618
         }

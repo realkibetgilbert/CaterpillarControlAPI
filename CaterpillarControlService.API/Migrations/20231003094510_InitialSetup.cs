@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CaterpillarControlService.API.Migrations
 {
-    public partial class Setup : Migration
+    public partial class InitialSetup : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -32,6 +32,7 @@ namespace CaterpillarControlService.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -72,7 +73,8 @@ namespace CaterpillarControlService.API.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
@@ -90,20 +92,6 @@ namespace CaterpillarControlService.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Planets", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Spices",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Spices", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -212,6 +200,85 @@ namespace CaterpillarControlService.API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Shifts",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    RiderId = table.Column<long>(type: "bigint", nullable: false),
+                    ControlStationId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shifts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Shifts_AspNetUsers_RiderId",
+                        column: x => x.RiderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Shifts_ControlStations_ControlStationId",
+                        column: x => x.ControlStationId,
+                        principalTable: "ControlStations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserControlStations",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    ControlStationId = table.Column<long>(type: "bigint", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserControlStations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserControlStations_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserControlStations_ControlStations_ControlStationId",
+                        column: x => x.ControlStationId,
+                        principalTable: "ControlStations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Spices",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShiftId = table.Column<long>(type: "bigint", nullable: false),
+                    CollectedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Spices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Spices_Shifts_ShiftId",
+                        column: x => x.ShiftId,
+                        principalTable: "Shifts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -250,6 +317,38 @@ namespace CaterpillarControlService.API.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Shifts_ControlStationId",
+                table: "Shifts",
+                column: "ControlStationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Shifts_RiderId",
+                table: "Shifts",
+                column: "RiderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Spices_Reference",
+                table: "Spices",
+                column: "Reference",
+                unique: true,
+                filter: "[Reference] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Spices_ShiftId",
+                table: "Spices",
+                column: "ShiftId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserControlStations_ControlStationId",
+                table: "UserControlStations",
+                column: "ControlStationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserControlStations_UserId",
+                table: "UserControlStations",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -273,19 +372,25 @@ namespace CaterpillarControlService.API.Migrations
                 name: "Caterpillars");
 
             migrationBuilder.DropTable(
-                name: "ControlStations");
-
-            migrationBuilder.DropTable(
                 name: "Planets");
 
             migrationBuilder.DropTable(
                 name: "Spices");
 
             migrationBuilder.DropTable(
+                name: "UserControlStations");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Shifts");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "ControlStations");
         }
     }
 }
