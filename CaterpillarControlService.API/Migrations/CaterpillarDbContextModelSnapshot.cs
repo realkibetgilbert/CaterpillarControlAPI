@@ -30,15 +30,31 @@ namespace CaterpillarControlService.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Length")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("X")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Y")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Caterpillars");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Length = 10,
+                            Name = "Caterpillar  A",
+                            X = 0,
+                            Y = 0
+                        });
                 });
 
             modelBuilder.Entity("CaterpillarControlService.API.Core.Models.ControlStation", b =>
@@ -70,12 +86,27 @@ namespace CaterpillarControlService.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("Planets");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Height = 30,
+                            Name = "Distant",
+                            Width = 30
+                        });
                 });
 
             modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Shift", b =>

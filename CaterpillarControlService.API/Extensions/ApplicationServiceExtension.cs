@@ -27,17 +27,10 @@ namespace CaterpillarControlService.API.Extensions
             services.AddDbContext<CaterpillarDbContext>(options =>
                options.UseSqlServer(config.GetConnectionString("CaterpillarConnectionstring")));
 
-            //services.AddDbContext<CaterpillarDbContext>(options =>
-            //      options.UseSqlServer(config.GetConnectionString("CaterpillarConnectionstring")))
-            //    .AddIdentityCore<User>()
-
-            //.AddRoles<IdentityRole>()
-            //.AddEntityFrameworkStores<CaterpillarDbContext>()
-            //.AddRoleManager<RoleManager<IdentityRole>>()
-            //.AddSignInManager<SignInManager<User>>()
-            //.AddUserManager<UserManager<User>>();
-
             services.AddScoped<IControlStationRepository, ControlStationRepository>();
+
+            services.AddScoped<ICaterpillarRepository, CaterpillarRepository>();
+            services.AddScoped<IPlanetRepository, PlanetRepository>();
 
             services.AddScoped<ITokenService, TokenService>();
 
@@ -99,6 +92,8 @@ namespace CaterpillarControlService.API.Extensions
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+
 
 
 

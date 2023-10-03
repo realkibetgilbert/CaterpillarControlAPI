@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CaterpillarControlService.API.Core.Models;
+using CaterpillarControlService.API.Dtos.Caterpillar;
 using CaterpillarControlService.API.Dtos.ControlStation;
 
 namespace CaterpillarControlService.API.Core.Utils
@@ -12,8 +13,12 @@ namespace CaterpillarControlService.API.Core.Utils
 
             CreateMap<ControlStation, ControlStationToDisplayDto>().ReverseMap();
 
-
             CreateMap<ControlStationToUpdateDto, ControlStation>().ReverseMap();
+
+            CreateMap<CaterpillarToCreateDto, Caterpillar>().ReverseMap();
+
+            CreateMap<Caterpillar, CaterpillarToDisplayDto>().ReverseMap();
+
         }
     }
 }

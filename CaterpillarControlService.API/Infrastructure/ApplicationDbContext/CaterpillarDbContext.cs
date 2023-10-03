@@ -8,7 +8,7 @@ namespace CaterpillarControlService.API.Infrastructure.ApplicationDbContext
 {
     public class CaterpillarDbContext : IdentityDbContext<User, IdentityRole<long>, long>
     {
-        public CaterpillarDbContext(DbContextOptions<CaterpillarDbContext> options) : base(options)
+        public CaterpillarDbContext(DbContextOptions<CaterpillarDbContext> options,IConfiguration configuration) : base(options)
         {
         }
         public DbSet<ControlStation> ControlStations { get; set; }
@@ -25,6 +25,8 @@ namespace CaterpillarControlService.API.Infrastructure.ApplicationDbContext
             builder.ApplyConfiguration(new SpiceConfiguration());
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new ControlStationConfiguration());
+            builder.ApplyConfiguration(new PlanetConfiguration());
+            builder.ApplyConfiguration(new CaterpillarConfiguration());
         }
     }
 }

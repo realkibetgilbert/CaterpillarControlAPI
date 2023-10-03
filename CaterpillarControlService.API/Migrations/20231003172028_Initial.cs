@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CaterpillarControlService.API.Migrations
 {
-    public partial class InitialSetup : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -60,7 +60,9 @@ namespace CaterpillarControlService.API.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Length = table.Column<int>(type: "int", nullable: false),
+                    X = table.Column<int>(type: "int", nullable: false),
+                    Y = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,7 +89,9 @@ namespace CaterpillarControlService.API.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Width = table.Column<int>(type: "int", nullable: false),
+                    Height = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -278,6 +282,16 @@ namespace CaterpillarControlService.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Caterpillars",
+                columns: new[] { "Id", "Length", "Name", "X", "Y" },
+                values: new object[] { 1L, 10, "Caterpillar  A", 0, 0 });
+
+            migrationBuilder.InsertData(
+                table: "Planets",
+                columns: new[] { "Id", "Height", "Name", "Width" },
+                values: new object[] { 1L, 30, "Distant", 30 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
