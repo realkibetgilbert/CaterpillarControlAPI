@@ -1,6 +1,6 @@
 ﻿using CaterpillarControlService.API.Core.Models;
 using CaterpillarControlService.API.Dtos.Caterpillar;
-
+using System.Drawing;
 namespace CaterpillarControlService.API.Core.Interfaces
 {
     public interface ICaterpillarRepository
@@ -9,5 +9,6 @@ namespace CaterpillarControlService.API.Core.Interfaces
         Task<Caterpillar?> GetCaterpillar(long id);
         Task<Caterpillar?> UpdateCaterpillar(long id,Caterpillar caterpillar);
         bool IsCrossingBoundary(Caterpillar caterpillar, CaterpillarMovementDto movementDto, Planet planet);
+        Bitmap GenerateRadarImage(Caterpillar caterpillar);
     }
 }

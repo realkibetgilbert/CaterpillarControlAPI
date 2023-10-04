@@ -7,6 +7,7 @@ using CaterpillarControlService.API.Dtos.ControlStation;
 using CaterpillarControlService.API.Infrastructure.ApplicationDbContext;
 using CaterpillarControlService.API.Infrastructure.SqlServerImplementations;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing.Imaging;
 using System.Numerics;
 using static CaterpillarControlService.API.Core.Utils.Enums.Enumeration;
 
@@ -42,7 +43,7 @@ namespace CaterpillarControlService.API.Controllers
 
 
 
-        [HttpPatch("/caterpillars/{id}/move")]
+        [HttpPatch("/caterpillars/move/{id}")]
         public async Task<IActionResult> MoveCaterpillar([FromRoute] long id, [FromBody] CaterpillarMovementDto movementDto)
         {
 
@@ -64,16 +65,16 @@ namespace CaterpillarControlService.API.Controllers
 
             switch (movementDto.Direction)
             {
-                case DirectionType.Up:
+                case DirectionType.U:
                     caterpillar.Y -= movementDto.Distance;
                     break;
-                case DirectionType.Down:
+                case DirectionType.D:
                     caterpillar.Y += movementDto.Distance;
                     break;
-                case DirectionType.Left:
+                case DirectionType.L:
                     caterpillar.X -= movementDto.Distance;
                     break;
-                case DirectionType.Right:
+                case DirectionType.R:
                     caterpillar.X += movementDto.Distance;
                     break;
                 default:
@@ -84,7 +85,7 @@ namespace CaterpillarControlService.API.Controllers
             return StatusCode(StatusCodes.Status200OK, caterpillar);
 
         }
-        [HttpPatch("/caterpillars/{id}/growshrink")]
+        [HttpPatch("/caterpillars/growshrink/{id}")]
         public async Task<IActionResult> GrowShrinkCaterpillar([FromRoute] long id, [FromBody] CaterpillarGrowShrinkDto caterpillarGrowShrinkDto)
         {
 
@@ -117,5 +118,35 @@ namespace CaterpillarControlService.API.Controllers
 
         }
 
+        [HttpGet("/caterpillars/display/{id}")]
+        public async Task<IActionResult> CaterpillarDisplay([FromRoute] long id)
+        {
+
+            var caterpillar = await _caterpillarRepository.GetCaterpillar(id);
+
+            if (caterpillar == null)
+            {
+                return NotFound("Caterpillar not found.");
+            }
+
+
+            var radarImage = _caterpillarRepository.GenerateRadarImage(caterpillar);
+
+            if (radarImage == null)
+            {
+                return NotFound("Radar image not found."); 
+            }
+
+            using (var memoryStream = new MemoryStream())
+            {
+                radarImage.Save(memoryStream, ImageFormat.Png); 
+
+                memoryStream.Seek(0, SeekOrigin.Begin); 
+
+                return File(memoryStream.ToArray(), "image/png"); 
+            }
+
+        }
     }
+
 }

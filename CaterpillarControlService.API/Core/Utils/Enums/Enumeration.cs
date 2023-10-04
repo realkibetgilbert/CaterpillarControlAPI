@@ -8,14 +8,14 @@ namespace CaterpillarControlService.API.Core.Utils.Enums
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public enum DirectionType
         {
-            [Description("Up")]
-            Up = 1,
-            [Description("Down")]
-            Down,
-            [Description("Left")]
-            Left,
-            [Description("Right")]
-            Right
+            [Description("U")]
+            U= 1,
+            [Description("D")]
+            D,
+            [Description("L")]
+            L,
+            [Description("R")]
+            R
 
         }
         [JsonConverter(typeof(JsonStringEnumConverter))]
