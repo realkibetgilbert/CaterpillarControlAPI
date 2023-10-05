@@ -1,4 +1,5 @@
-﻿using CaterpillarControlService.API.Core.Interfaces;
+﻿using AutoMapper;
+using CaterpillarControlService.API.Core.Interfaces;
 using CaterpillarControlService.API.Core.Models;
 using CaterpillarControlService.API.Core.Utils;
 using CaterpillarControlService.API.Dtos.Auth;
@@ -18,17 +19,19 @@ namespace CaterpillarControlService.API.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole<long>> _roleManager;
+        private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
         private readonly CaterpillarDbContext _context;
 
-        public AuthController(UserManager<User> userManager, RoleManager<IdentityRole<long>> roleManager, ITokenService tokenService, CaterpillarDbContext context)
+        public AuthController(UserManager<User> userManager, RoleManager<IdentityRole<long>> roleManager, IMapper mapper, ITokenService tokenService, CaterpillarDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _mapper = mapper;
             _tokenService = tokenService;
             _context = context;
         }
-        
+
         [HttpPost]
         [Route("login")]
         [ValidateModel]
@@ -93,5 +96,14 @@ namespace CaterpillarControlService.API.Controllers
             return BadRequest(invalidCredentials);
         }
 
+
+        [HttpGet]
+        [Route("riders")]
+        public async Task<IActionResult> Get()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            return Ok(_mapper.Map<List<RiderToDisplayDto>>(users));
+
+        }
     }
 }

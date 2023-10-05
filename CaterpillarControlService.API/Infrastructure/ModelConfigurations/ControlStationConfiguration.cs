@@ -9,6 +9,14 @@ namespace CaterpillarControlService.API.Infrastructure.ModelConfigurations
         public void Configure(EntityTypeBuilder<ControlStation> builder)
         {
             builder.Property(t => t.IsActive).HasDefaultValue(true);
+            builder.HasData(
+               new ControlStation
+               {
+                   Id = 1,
+                   Name="A",
+                   IsActive= true,
+               }
+               );
         }
     }
 }

@@ -31,6 +31,8 @@ namespace CaterpillarControlService.API.Extensions
 
             services.AddScoped<ICaterpillarRepository, CaterpillarRepository>();
             services.AddScoped<IPlanetRepository, PlanetRepository>();
+            services.AddScoped<IDeviceInformationRepository, DeviceInformationRepository>();
+            services.AddScoped<IShiftRepository, ShiftRepository>();
 
             services.AddScoped<ITokenService, TokenService>();
 

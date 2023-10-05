@@ -7,6 +7,8 @@ namespace CaterpillarControlService.API.Core.Interfaces
     {
         Task<Caterpillar?> Add(Caterpillar caterpillar);
         Task<Caterpillar?> GetCaterpillar(long id);
+
+        Task<List<Caterpillar>> GetCaterpillars();
         Task<Caterpillar?> UpdateCaterpillar(long id,Caterpillar caterpillar);
         bool IsCrossingBoundary(Caterpillar caterpillar, CaterpillarMovementDto movementDto, Planet planet);
         Bitmap GenerateRadarImage(Caterpillar caterpillar);

@@ -17,16 +17,17 @@ namespace CaterpillarControlService.API.Infrastructure.ApplicationDbContext
         public DbSet<Spice> Spices { get; set; }
         public DbSet<Shift> Shifts { get; set; }
         public DbSet<UserControlStation> UserControlStations { get; set; }
+        public DbSet<DeviceInformation>DeviceInformations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.ApplyConfiguration(new ShiftConfiguration());
-            builder.ApplyConfiguration(new SpiceConfiguration());
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new ControlStationConfiguration());
             builder.ApplyConfiguration(new PlanetConfiguration());
             builder.ApplyConfiguration(new CaterpillarConfiguration());
+            builder.ApplyConfiguration(new GecaInformationConfiguration());
+            builder.ApplyConfiguration(new ShiftConfiguration());
         }
     }
 }

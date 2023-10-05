@@ -27,49 +27,49 @@ namespace CaterpillarControlService.API.Infrastructure.SqlServerImplementations
 
         public Bitmap GenerateRadarImage(Caterpillar caterpillar)
         {
-            
-            
-            int radarDiameter = 11; 
+
+
+            int radarDiameter = 11;
             int radarPixelSize = 1;
             int radarWidth = radarDiameter * radarPixelSize;
             int radarHeight = radarDiameter * radarPixelSize;
 
 
-            int enlargedWidth = radarWidth * 2; 
-            int enlargedHeight = radarHeight * 2; 
+            int enlargedWidth = radarWidth * 2;
+            int enlargedHeight = radarHeight * 2;
             var radarImage = new Bitmap(enlargedWidth, enlargedHeight);
 
-           // var radarImage = new Bitmap(radarWidth, radarHeight);
+            // var radarImage = new Bitmap(radarWidth, radarHeight);
 
             using (var graphics = Graphics.FromImage(radarImage))
             {
-              
+
                 graphics.Clear(Color.Black);
 
-               
+
                 int headX = caterpillar.X;
                 int headY = caterpillar.Y;
                 int caterpillarLength = caterpillar.Length;
                 int tailX = headX - caterpillarLength;
 
-                
+
                 var segmentColor = Brushes.Black;
                 var segmentFont = new Font("Arial", 10);
 
-               
+
                 graphics.DrawString("H", segmentFont, segmentColor, new PointF(headX, headY));
 
-               
+
                 graphics.DrawString("T", segmentFont, segmentColor, new PointF(tailX, headY));
 
-                
+
                 for (int i = 1; i < caterpillarLength; i++)
                 {
                     int intermediateX = tailX + i;
                     graphics.DrawString("0", segmentFont, segmentColor, new PointF(intermediateX, headY));
                 }
 
-                radarImage.Save("radar.png"); 
+                radarImage.Save("radar.png");
             }
 
             return radarImage;
@@ -81,13 +81,18 @@ namespace CaterpillarControlService.API.Infrastructure.SqlServerImplementations
 
         }
 
+        public async Task<List<Caterpillar>> GetCaterpillars()
+        {
+            return await _context.Caterpillars.ToListAsync();
+        }
+
         public bool IsCrossingBoundary(Caterpillar caterpillar, CaterpillarMovementDto movementDto, Planet planet)
         {
             int newX = caterpillar.X;
 
             int newY = caterpillar.Y;
 
-            
+
             switch (movementDto.Direction)
             {
                 case DirectionType.U:
@@ -103,26 +108,26 @@ namespace CaterpillarControlService.API.Infrastructure.SqlServerImplementations
                     newX += movementDto.Distance;
                     break;
                 default:
-                    return false; 
+                    return false;
             }
 
-            
+
             if (newX < 0 || newX >= planet.Width || newY < 0 || newY >= planet.Height)
             {
-                return true; 
+                return true;
             }
 
-            return false; 
+            return false;
         }
 
 
         public async Task<Caterpillar> UpdateCaterpillar(long id, Caterpillar caterpillar)
         {
-            var existingCaterpillar= await _context.Caterpillars.FirstOrDefaultAsync(x => x.Id == id);
+            var existingCaterpillar = await _context.Caterpillars.FirstOrDefaultAsync(x => x.Id == id);
 
-            if(existingCaterpillar == null) { return null; }
+            if (existingCaterpillar == null) { return null; }
 
-            existingCaterpillar.X=caterpillar.X;
+            existingCaterpillar.X = caterpillar.X;
 
             existingCaterpillar.Y = caterpillar.Y;
 
@@ -131,6 +136,6 @@ namespace CaterpillarControlService.API.Infrastructure.SqlServerImplementations
             return caterpillar;
         }
 
-        
+
     }
 }
