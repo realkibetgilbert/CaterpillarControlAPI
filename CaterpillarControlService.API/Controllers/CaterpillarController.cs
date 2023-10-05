@@ -68,7 +68,7 @@ namespace CaterpillarControlService.API.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, message);
             }
 
-            var planet = await _planetRepository.GetById(1);
+            var planet = await _planetRepository.GetPlanetById(1);
 
             bool isCrossingBoundary = _caterpillarRepository.IsCrossingBoundary(caterpillar, movementDto, planet);
 
