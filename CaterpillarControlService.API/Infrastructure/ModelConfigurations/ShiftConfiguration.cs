@@ -9,17 +9,15 @@ namespace CaterpillarControlService.API.Infrastructure.ModelConfigurations
         public void Configure(EntityTypeBuilder<Shift> builder)
         {
 
-            builder
-            .HasOne(s => s.ControlStation)
-            .WithMany()
-            .HasForeignKey(s => s.ControlStationId);
 
-            builder
-         .HasMany(s => s.Spices)
-         .WithOne(t => t.Shift)
-         .HasForeignKey(t => t.ShiftId)
-         .OnDelete(DeleteBehavior.Restrict);
-
+            builder.HasData(
+                new Shift
+                {
+                    Id = 1,
+                    CreatedAt = DateTime.UtcNow,
+                    IsActive = true,
+                }
+                );
         }
     }
 }

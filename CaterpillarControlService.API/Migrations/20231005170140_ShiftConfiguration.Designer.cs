@@ -4,6 +4,7 @@ using CaterpillarControlService.API.Infrastructure.ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CaterpillarControlService.API.Migrations
 {
     [DbContext(typeof(CaterpillarDbContext))]
-    partial class CaterpillarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231005170140_ShiftConfiguration")]
+    partial class ShiftConfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CaterpillarControlService.API.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialSetup : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -81,6 +81,20 @@ namespace CaterpillarControlService.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ControlStations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GECADeviceInformation",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    batteryPercentage = table.Column<double>(type: "float", nullable: false),
+                    deviceId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GECADeviceInformation", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -264,29 +278,43 @@ namespace CaterpillarControlService.API.Migrations
                 name: "Spices",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ShiftId = table.Column<long>(type: "bigint", nullable: false),
-                    CollectedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    X = table.Column<int>(type: "int", nullable: false),
+                    Y = table.Column<int>(type: "int", nullable: false),
+                    PlanetId = table.Column<long>(type: "bigint", nullable: true),
+                    ShiftId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Spices", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Spices_Planets_PlanetId",
+                        column: x => x.PlanetId,
+                        principalTable: "Planets",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Spices_Shifts_ShiftId",
                         column: x => x.ShiftId,
                         principalTable: "Shifts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
                 table: "Caterpillars",
                 columns: new[] { "Id", "Length", "Name", "X", "Y" },
                 values: new object[] { 1L, 10, "Caterpillar  A", 0, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ControlStations",
+                columns: new[] { "Id", "IsActive", "Name" },
+                values: new object[] { 1L, true, "A" });
+
+            migrationBuilder.InsertData(
+                table: "GECADeviceInformation",
+                columns: new[] { "Id", "batteryPercentage", "deviceId" },
+                values: new object[] { 1L, 90.0, "1" });
 
             migrationBuilder.InsertData(
                 table: "Planets",
@@ -343,11 +371,9 @@ namespace CaterpillarControlService.API.Migrations
                 column: "RiderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Spices_Reference",
+                name: "IX_Spices_PlanetId",
                 table: "Spices",
-                column: "Reference",
-                unique: true,
-                filter: "[Reference] IS NOT NULL");
+                column: "PlanetId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Spices_ShiftId",
@@ -386,7 +412,7 @@ namespace CaterpillarControlService.API.Migrations
                 name: "Caterpillars");
 
             migrationBuilder.DropTable(
-                name: "Planets");
+                name: "GECADeviceInformation");
 
             migrationBuilder.DropTable(
                 name: "Spices");
@@ -396,6 +422,9 @@ namespace CaterpillarControlService.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Planets");
 
             migrationBuilder.DropTable(
                 name: "Shifts");

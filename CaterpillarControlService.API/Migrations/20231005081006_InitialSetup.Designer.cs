@@ -4,6 +4,7 @@ using CaterpillarControlService.API.Infrastructure.ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CaterpillarControlService.API.Migrations
 {
     [DbContext(typeof(CaterpillarDbContext))]
-    partial class CaterpillarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231005081006_InitialSetup")]
+    partial class InitialSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,7 +88,7 @@ namespace CaterpillarControlService.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.DeviceInformation", b =>
+            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.GECADeviceInformation", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -102,7 +104,7 @@ namespace CaterpillarControlService.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DeviceInformations");
+                    b.ToTable("GECADeviceInformation");
 
                     b.HasData(
                         new
@@ -152,6 +154,9 @@ namespace CaterpillarControlService.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
+                    b.Property<long>("ControlStationId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -161,22 +166,16 @@ namespace CaterpillarControlService.API.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<long?>("UserId")
+                    b.Property<long>("RiderId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ControlStationId");
+
+                    b.HasIndex("RiderId");
 
                     b.ToTable("Shifts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            CreatedAt = new DateTime(2023, 10, 5, 17, 1, 40, 171, DateTimeKind.Utc).AddTicks(1051),
-                            IsActive = true
-                        });
                 });
 
             modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Spice", b =>
@@ -193,6 +192,9 @@ namespace CaterpillarControlService.API.Migrations
                     b.Property<long?>("PlanetId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("ShiftId")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("X")
                         .HasColumnType("int");
 
@@ -202,6 +204,8 @@ namespace CaterpillarControlService.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PlanetId");
+
+                    b.HasIndex("ShiftId");
 
                     b.ToTable("Spices");
                 });
@@ -446,9 +450,21 @@ namespace CaterpillarControlService.API.Migrations
 
             modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Shift", b =>
                 {
-                    b.HasOne("CaterpillarControlService.API.Core.Models.User", null)
+                    b.HasOne("CaterpillarControlService.API.Core.Models.ControlStation", "ControlStation")
+                        .WithMany()
+                        .HasForeignKey("ControlStationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CaterpillarControlService.API.Core.Models.User", "Rider")
                         .WithMany("Shifts")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("RiderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ControlStation");
+
+                    b.Navigation("Rider");
                 });
 
             modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Spice", b =>
@@ -456,6 +472,10 @@ namespace CaterpillarControlService.API.Migrations
                     b.HasOne("CaterpillarControlService.API.Core.Models.Planet", null)
                         .WithMany("Spices")
                         .HasForeignKey("PlanetId");
+
+                    b.HasOne("CaterpillarControlService.API.Core.Models.Shift", null)
+                        .WithMany("Spices")
+                        .HasForeignKey("ShiftId");
                 });
 
             modelBuilder.Entity("CaterpillarControlService.API.Core.Models.UserControlStation", b =>
@@ -529,6 +549,11 @@ namespace CaterpillarControlService.API.Migrations
                 });
 
             modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Planet", b =>
+                {
+                    b.Navigation("Spices");
+                });
+
+            modelBuilder.Entity("CaterpillarControlService.API.Core.Models.Shift", b =>
                 {
                     b.Navigation("Spices");
                 });

@@ -8,9 +8,6 @@ namespace CaterpillarControlService.API.Infrastructure.ModelConfigurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-
-            builder.HasMany(S => S.Shifts).WithOne(U => U.Rider).HasForeignKey(U => U.RiderId).OnDelete(DeleteBehavior.Cascade);
-
             builder.Property(t => t.IsActive).HasDefaultValue(true);
           
         }
