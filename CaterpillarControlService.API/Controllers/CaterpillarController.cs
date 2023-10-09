@@ -29,11 +29,22 @@ namespace CaterpillarControlService.API.Controllers
             _mapper = mapper;
         }
 
+
+        [HttpGet]
+        [ProducesResponseType(200,Type = typeof(IEnumerable<Caterpillar>))]
+        [Route("get-caterpillars")]
+        [Authorize(Roles = "Rider")]
+        public async Task<IActionResult> GetCaterpillars()
+        {
+            var caterpillars= _mapper.Map<List<CaterpillarToDisplayDto>>(_caterpillarRepository.GetCaterpillars());
+            if(!ModelState.IsValid) { return BadRequest(ModelState); }
+            return Ok(caterpillars);
+        }
         [HttpPost]
         [Route("create-caterpillar")]
         [ValidateModel]
         [Authorize(Roles = "Rider")]
-        public async Task<IActionResult> Post(CaterpillarToCreateDto caterpillarToCreateDto)
+        public async Task<IActionResult> CreateCaterpillar(CaterpillarToCreateDto caterpillarToCreateDto)
         {
             var caterpillarDomain = _mapper.Map<Caterpillar>(caterpillarToCreateDto);
 
@@ -42,14 +53,7 @@ namespace CaterpillarControlService.API.Controllers
             return Ok(_mapper.Map<CaterpillarToDisplayDto>(caterpillarDomain));
         }
 
-        [HttpGet]
-        [Route("get-caterpillars")]
-        [Authorize(Roles ="Rider")]
-
-        public async Task<IActionResult> Get()
-        {
-            return Ok(await _caterpillarRepository.GetCaterpillars());
-        }
+   
         [HttpPatch]
         [Route("move/{id}")]
         [Authorize(Roles = "Rider")]
