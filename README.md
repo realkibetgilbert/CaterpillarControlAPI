@@ -28,7 +28,7 @@ https://github.com/realkibetgilbert/CaterpillarControlAPI.git
 
 ## Usage
 You will first login to get the access token
-Use rider@gmail.com as username and !!rider@ as password
+Use rider@gmail.com as email and !!rider@ as password
 
 Authorize the caterpillar endpoint using the Bearer the token you generated on login for example Bearer LCK1AsfBL4JVHPc8u8toyfkeUz2KkotLu40R004OVSfKk2iK1Zd3vvfwV4gXilGD
 
