@@ -13,9 +13,15 @@ namespace CaterpillarControlService.API.Infrastructure.SqlServerImplementations
         {
             _context = context;
         }
-        public async Task<Planet> GetById(long id)
+
+        public async Task<Planet> GetPlanetById(long id)
         {
-            return await _context.Planets.FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.Planets.FirstOrDefaultAsync(p => p.Id == id);   
+        }
+
+        public async Task<List<Planet>> GetPlanets()
+        {
+            return await _context.Planets.ToListAsync();
         }
     }
 }

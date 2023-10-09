@@ -4,6 +4,7 @@ namespace CaterpillarControlService.API.Core.Interfaces
 {
     public interface IPlanetRepository
     {
-        Task<Planet?> GetById(long id);
+        Task<List<Planet>> GetPlanets();
+        Task<Planet> GetPlanetById(long id);
     }
 }
